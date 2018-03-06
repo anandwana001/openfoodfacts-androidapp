@@ -3,6 +3,7 @@ package openfoodfacts.github.scrachx.openfood.views;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -58,6 +59,9 @@ public class LoginActivity extends BaseActivity implements CustomTabActivityHelp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getResources().getBoolean(R.bool.portrait_only)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         setContentView(R.layout.activity_login);
 
         setSupportActionBar(toolbar);
@@ -95,17 +99,18 @@ public class LoginActivity extends BaseActivity implements CustomTabActivityHelp
         String login = loginView.getText().toString();
         String password = passwordView.getText().toString();
 
+        if (TextUtils.isEmpty(login)) {
+            loginView.setError(getString(R.string.error_field_required));
+            loginView.requestFocus();
+            return;
+        }
+
         if (!(password.length() >= 6)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             passwordView.requestFocus();
             return;
         }
 
-        if (TextUtils.isEmpty(login)) {
-            loginView.setError(getString(R.string.error_field_required));
-            loginView.requestFocus();
-            return;
-        }
 
         final LoadToast lt = new LoadToast(this);
         save.setClickable(false);
